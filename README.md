@@ -341,3 +341,53 @@ MODULE_DESCRIPTION("Monitor de Procesos");
 MODULE_VERSION("1.0");
 ```
 
+#### 2. Api - Backend
+
+Esta api esta hecha en lenguaje Go y sirve para pasar informacion alfrontend del archivo creado en los modulos. Se define que sea abierta en el puerto :5000 del localhost, y las rutas necesarias con las que se comunica el frontend son las siguientes:
+
+```sh
+func main() {
+	router := mux.NewRouter()
+
+	router.HandleFunc("/all", getall).Methods("GET", "OPTIONS")
+	router.HandleFunc("/ram", getRAM).Methods("GET", "OPTIONS")
+	router.HandleFunc("/cpuinfo", getCPUInfo).Methods("GET", "OPTIONS")
+	router.HandleFunc("/username/{uid}", getnameuser).Methods("GET", "OPTIONS")
+
+	router.HandleFunc("/detener/{id}", killing).Methods("GET", "OPTIONS")
+
+	fmt.Println("El servidor esta escuchando en el puerto 5000")
+	http.ListenAndServe(":5000", router)
+}
+```
+
+Siendo estas rutas las necesarias para obtener la informacion de utilizacion de recursos, su funcion esta dada de la siguiente forma
+
+##### /all
+Obtiene la informacion de los procesos y del cpu
+
+##### /ram
+Obtiene la informacion concerniente a la memoria RAM
+
+##### /cpuinfo
+Obtiene la informacion del cpu
+
+##### /username/{uid}
+Obtiene el nombre de un usuario partiendo de su uid
+
+##### /detener/{id} 
+Elimina un proceso de la lista de procesos partiendo de su pid
+
+Todos las rutas definidas anteriormente siguen el mismo patron el cual consta de ir a leer el archivo generado por el modulo descrito anteriormente y posteriormente enviar la informacion al frontend (a excepcion de kill y getusername, los cuales ejecutan un comando del sistema para cumplir su objetivo).
+
+#### 3. FrontEnd
+
+El frontend se encarga de precentar los datos de forma legible y clara de tal forma que sea entendible para el usuario comun. Esta hecho sobre las librerias de REACTJS y se ejecuta en el puerto 3000. 
+
+
+
+#### 4. Test
+
+Los test se hicieron en base a la herramienta Locust la cual se encarga de estresar la pagina llenandola de solicitudes, emulando el trafico de diferentes usuarios. 
+
+Imagenes de Tests de Trafico con locust
